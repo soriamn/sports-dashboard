@@ -23,108 +23,117 @@ any entity 1──* ExternalRef
 ```
 
 ### Sport
-| Field | Type | Notes |
-|-------|------|-------|
-| id | string | Stable slug: `football`, `f1`. |
-| name | string | Display name. |
+
+| Field | Type   | Notes                          |
+| ----- | ------ | ------------------------------ |
+| id    | string | Stable slug: `football`, `f1`. |
+| name  | string | Display name.                  |
 
 ### Competition
+
 A competition in a specific season (e.g. "Premier League 2026/27").
 
-| Field | Type | Notes |
-|-------|------|-------|
-| id | string | Internal. |
-| sportId | string | FK to Sport. |
-| name | string | |
-| season | string | e.g. `2026-27` or `2026`. |
+| Field   | Type    | Notes                                |
+| ------- | ------- | ------------------------------------ |
+| id      | string  | Internal.                            |
+| sportId | string  | FK to Sport.                         |
+| name    | string  |                                      |
+| season  | string  | e.g. `2026-27` or `2026`.            |
 | country | string? | ISO code or `INT` for international. |
 
 ### Participant
+
 Anything that takes part in an event.
 
-| Field | Type | Notes |
-|-------|------|-------|
-| id | string | Internal. |
-| sportId | string | |
-| kind | `team` \| `athlete` | A F1 constructor is a `team`; a driver is an `athlete`. |
-| name | string | |
-| shortName | string? | e.g. "ARS". |
-| country | string? | |
-| imageUrl | string? | Crest or photo. We link to it; we do not host it. |
+| Field     | Type                | Notes                                                   |
+| --------- | ------------------- | ------------------------------------------------------- |
+| id        | string              | Internal.                                               |
+| sportId   | string              |                                                         |
+| kind      | `team` \| `athlete` | A F1 constructor is a `team`; a driver is an `athlete`. |
+| name      | string              |                                                         |
+| shortName | string?             | e.g. "ARS".                                             |
+| country   | string?             |                                                         |
+| imageUrl  | string?             | Crest or photo. We link to it; we do not host it.       |
 
 An athlete's team is not stored here, because athletes change teams. Use `CompetitionEntry`.
 
 ### CompetitionEntry
+
 Registers a participant in a competition for its season. This is what links an athlete to a team in a given season (e.g. a driver and a constructor in "Formula 1 2026"). It is also usable for team sports to list the teams of a competition.
 
-| Field | Type | Notes |
-|-------|------|-------|
-| competitionId | string | |
-| participantId | string | The athlete, or the team in team sports. |
-| teamId | string? | For athletes: the team they represent in this competition. |
-| number | string? | Racing or shirt number, when applicable. |
-| validFrom / validTo | UTC timestamp? | Only needed for mid-season changes. |
+| Field               | Type           | Notes                                                      |
+| ------------------- | -------------- | ---------------------------------------------------------- |
+| competitionId       | string         |                                                            |
+| participantId       | string         | The athlete, or the team in team sports.                   |
+| teamId              | string?        | For athletes: the team they represent in this competition. |
+| number              | string?        | Racing or shirt number, when applicable.                   |
+| validFrom / validTo | UTC timestamp? | Only needed for mid-season changes.                        |
 
 ### Event
+
 One match, race or session.
 
-| Field | Type | Notes |
-|-------|------|-------|
-| id | string | Internal. |
-| competitionId | string | |
-| startsAt | UTC timestamp | |
-| timeConfirmed | boolean | `false` when the provider says "TBD". Calendar feeds mark these as tentative. |
-| status | `scheduled` \| `live` \| `finished` \| `postponed` \| `cancelled` | |
-| round | string? | "Matchday 12", "Quarter-final", "Monaco GP". |
-| venue | string? | |
-| details | JSON | Sport-specific, validated per sport (see below). |
+| Field         | Type                                                              | Notes                                                                         |
+| ------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| id            | string                                                            | Internal.                                                                     |
+| competitionId | string                                                            |                                                                               |
+| startsAt      | UTC timestamp                                                     |                                                                               |
+| timeConfirmed | boolean                                                           | `false` when the provider says "TBD". Calendar feeds mark these as tentative. |
+| status        | `scheduled` \| `live` \| `finished` \| `postponed` \| `cancelled` |                                                                               |
+| round         | string?                                                           | "Matchday 12", "Quarter-final", "Monaco GP".                                  |
+| venue         | string?                                                           |                                                                               |
+| details       | JSON                                                              | Sport-specific, validated per sport (see below).                              |
 
 ### EventParticipant
+
 Links participants to an event.
 
-| Field | Type | Notes |
-|-------|------|-------|
-| eventId | string | |
-| participantId | string | |
-| role | `home` \| `away` \| `competitor` | Football uses home/away; F1 uses competitor. |
-| outcome | JSON? | Per-participant result (score, finishing position, time). Sport-specific. |
+| Field         | Type                             | Notes                                                                     |
+| ------------- | -------------------------------- | ------------------------------------------------------------------------- |
+| eventId       | string                           |                                                                           |
+| participantId | string                           |                                                                           |
+| role          | `home` \| `away` \| `competitor` | Football uses home/away; F1 uses competitor.                              |
+| outcome       | JSON?                            | Per-participant result (score, finishing position, time). Sport-specific. |
 
 ### Standing
+
 One row of a competition table.
 
-| Field | Type | Notes |
-|-------|------|-------|
-| competitionId | string | |
-| participantId | string | |
-| rank | integer | |
-| points | number | |
-| stats | JSON | Sport-specific: played/won/drawn/lost/goals for football, wins for F1. |
-| table | string | Which table of the competition this row belongs to: `league`, `Group A`, `drivers`, `constructors`. |
-| updatedAt | UTC timestamp | |
+| Field         | Type          | Notes                                                                                               |
+| ------------- | ------------- | --------------------------------------------------------------------------------------------------- |
+| competitionId | string        |                                                                                                     |
+| participantId | string        |                                                                                                     |
+| rank          | integer       |                                                                                                     |
+| points        | number        |                                                                                                     |
+| stats         | JSON          | Sport-specific: played/won/drawn/lost/goals for football, wins for F1.                              |
+| table         | string        | Which table of the competition this row belongs to: `league`, `Group A`, `drivers`, `constructors`. |
+| updatedAt     | UTC timestamp |                                                                                                     |
 
 A competition can have several tables. F1 has two per season (`drivers` and `constructors`), and its races belong to the single competition, not to either table.
 
 ### NewsItem
-| Field | Type | Notes |
-|-------|------|-------|
-| id | string | |
-| participantId | string | The team the item relates to. |
-| title | string | |
-| url | string | Link to the original article. |
-| source | string | Publisher name. |
-| publishedAt | UTC timestamp | |
+
+| Field         | Type          | Notes                         |
+| ------------- | ------------- | ----------------------------- |
+| id            | string        |                               |
+| participantId | string        | The team the item relates to. |
+| title         | string        |                               |
+| url           | string        | Link to the original article. |
+| source        | string        | Publisher name.               |
+| publishedAt   | UTC timestamp |                               |
 
 We store the headline and link only, not article content.
 
 ### ExternalRef
+
 Maps our entities to provider IDs, so data from different sources can refer to the same thing.
 
-| Field | Type | Notes |
-|-------|------|-------|
-| entityType | `competition` \| `participant` \| `event` | |
-| entityId | string | Our internal ID. |
-| provider | string | e.g. `api-football`, `jolpica`. |
-| externalId | string | The provider's ID. |
+| Field      | Type                                      | Notes                           |
+| ---------- | ----------------------------------------- | ------------------------------- |
+| entityType | `competition` \| `participant` \| `event` |                                 |
+| entityId   | string                                    | Our internal ID.                |
+| provider   | string                                    | e.g. `api-football`, `jolpica`. |
+| externalId | string                                    | The provider's ID.              |
 
 Unique on `(provider, entityType, externalId)`. Adapters use it to upsert instead of creating duplicates.
 
@@ -140,12 +149,18 @@ type FootballEventDetails = {
 };
 type FootballOutcome = { score: number | null };
 type FootballStanding = {
-  played: number; won: number; drawn: number; lost: number;
-  goalsFor: number; goalsAgainst: number;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
 };
 
 // F1
-type F1EventDetails = { session: "race" | "qualifying" | "sprint" | "practice" };
+type F1EventDetails = {
+  session: "race" | "qualifying" | "sprint" | "practice";
+};
 type F1Outcome = { position: number | null; status: string; points?: number };
 type F1Standing = { wins: number };
 ```
