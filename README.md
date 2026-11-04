@@ -10,6 +10,7 @@ Requires the Node version in [`.nvmrc`](.nvmrc).
 
 ```bash
 npm ci
+npm run db:reset   # creates the local database with sample data
 npm run dev
 ```
 
