@@ -80,7 +80,7 @@ Planned PRs:
 
 1. Data spike (docs and fixtures only): choose the provider and league, save real sample responses as fixtures, check they fit the model, and record any model changes needed in `DATA_MODEL.md`. Do the same check against a Jolpica sample, so the model is tested against F1 early.
 2. Adapter with Zod schemas, tested against the fixtures.
-3. Sync script: upserts using `ExternalRef`, API key from environment, `.env.example`.
+3. Sync script: upserts using `ExternalRef`. ESPN needs no API key, so `.env.example` does not change (the key from the original plan was for API-Football, which we ruled out; see [PROVIDER_SPIKE.md](PROVIDER_SPIKE.md)). Split in two: the `external_ref` and `standing` tables first (schema-only PR), then the sync itself.
 
 ### 3. Team page
 

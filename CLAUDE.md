@@ -30,7 +30,7 @@ Everything in this repository is in **English**: code, comments, identifiers, co
 | Lint / format  | ESLint + Prettier                                             |
 | CI             | GitHub Actions                                                |
 
-Status: the app is scaffolded (Next.js, Tailwind, shadcn/ui, ESLint, Prettier, Vitest, CI) and the database layer exists (Drizzle schema, migrations, seed). The team calendar feed (`/teams/[teamId]/calendar.ics`, built with `ical-generator`) works from the database. Zod is set up and the ESPN football adapter exists (`src/adapters/`). The sync is not set up yet; it arrives with the user stories in `docs/PRODUCT.md`.
+Status: the app is scaffolded (Next.js, Tailwind, shadcn/ui, ESLint, Prettier, Vitest, CI) and the database layer exists (Drizzle schema, migrations, seed). The team calendar feed (`/teams/[teamId]/calendar.ics`, built with `ical-generator`) works from the database. Zod is set up and the ESPN football adapter exists (`src/adapters/`). The football sync (`src/sync/`, `npm run sync`) copies the four ESPN leagues into the database.
 
 Football data provider (decided in the story 2 spike): the **unofficial ESPN API**, for the Argentine Liga Profesional, Premier League, La Liga and Serie A. F1 uses Jolpica. Why ESPN, its quirks (no date ranges, no matchday, `timeValid`, statuses) and the proposed model changes are in [docs/PROVIDER_SPIKE.md](docs/PROVIDER_SPIKE.md). Read it before working on an adapter. Real saved responses live in `src/adapters/<provider>/__fixtures__/` and are the input for adapter tests; they are raw provider data, so Prettier ignores them and they must not be edited by hand.
 
@@ -52,10 +52,11 @@ Next.js docs matching the installed version are in `node_modules/next/dist/docs/
 | Generate a migration   | `npm run db:generate`                     |
 | Apply migrations       | `npm run db:migrate`                      |
 | Load sample data       | `npm run db:seed`                         |
+| Sync real football     | `npm run sync`                            |
 | Reset local DB         | `npm run db:reset`                        |
 | Browse the DB          | `npm run db:studio`                       |
 
-CI runs format check, lint, typecheck, tests and build on every pull request. Run them locally before pushing. The sync command will be added with the sync story.
+CI runs format check, lint, typecheck, tests and build on every pull request. Run them locally before pushing. `npm run sync` copies football data from ESPN into the database in `DATABASE_URL` (about 15 requests, a few seconds). It is safe to repeat and never deletes data, so it can run on top of the sample data; a league that fails is reported and the others are still saved. Run `npm run db:migrate` first if the database is new.
 
 First time on a machine: `npm ci`, then `npm run db:reset` to create the local database with sample data. Copy `.env.example` to `.env.local` only if you need a non-default `DATABASE_URL`. Node prints a notice that `.env.local` was not found when it is absent; that is harmless.
 
