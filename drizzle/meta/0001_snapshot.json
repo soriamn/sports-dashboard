@@ -46,9 +46,7 @@
       "indexes": {
         "competition_sport_id_idx": {
           "name": "competition_sport_id_idx",
-          "columns": [
-            "sport_id"
-          ],
+          "columns": ["sport_id"],
           "isUnique": false
         }
       },
@@ -57,12 +55,8 @@
           "name": "competition_sport_id_sport_id_fk",
           "tableFrom": "competition",
           "tableTo": "sport",
-          "columnsFrom": [
-            "sport_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sport_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -136,17 +130,12 @@
       "indexes": {
         "event_competition_starts_at_idx": {
           "name": "event_competition_starts_at_idx",
-          "columns": [
-            "competition_id",
-            "starts_at"
-          ],
+          "columns": ["competition_id", "starts_at"],
           "isUnique": false
         },
         "event_starts_at_idx": {
           "name": "event_starts_at_idx",
-          "columns": [
-            "starts_at"
-          ],
+          "columns": ["starts_at"],
           "isUnique": false
         }
       },
@@ -155,12 +144,8 @@
           "name": "event_competition_id_competition_id_fk",
           "tableFrom": "event",
           "tableTo": "competition",
-          "columnsFrom": [
-            "competition_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["competition_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -204,9 +189,7 @@
       "indexes": {
         "event_participant_participant_id_idx": {
           "name": "event_participant_participant_id_idx",
-          "columns": [
-            "participant_id"
-          ],
+          "columns": ["participant_id"],
           "isUnique": false
         }
       },
@@ -215,12 +198,8 @@
           "name": "event_participant_event_id_event_id_fk",
           "tableFrom": "event_participant",
           "tableTo": "event",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -228,22 +207,15 @@
           "name": "event_participant_participant_id_participant_id_fk",
           "tableFrom": "event_participant",
           "tableTo": "participant",
-          "columnsFrom": [
-            "participant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["participant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "event_participant_event_id_participant_id_pk": {
-          "columns": [
-            "event_id",
-            "participant_id"
-          ],
+          "columns": ["event_id", "participant_id"],
           "name": "event_participant_event_id_participant_id_pk"
         }
       },
@@ -285,21 +257,14 @@
       "indexes": {
         "external_ref_entity_idx": {
           "name": "external_ref_entity_idx",
-          "columns": [
-            "entity_type",
-            "entity_id"
-          ],
+          "columns": ["entity_type", "entity_id"],
           "isUnique": false
         }
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "external_ref_provider_entity_type_external_id_pk": {
-          "columns": [
-            "provider",
-            "entity_type",
-            "external_id"
-          ],
+          "columns": ["provider", "entity_type", "external_id"],
           "name": "external_ref_provider_entity_type_external_id_pk"
         }
       },
@@ -362,9 +327,7 @@
       "indexes": {
         "participant_sport_id_idx": {
           "name": "participant_sport_id_idx",
-          "columns": [
-            "sport_id"
-          ],
+          "columns": ["sport_id"],
           "isUnique": false
         }
       },
@@ -373,12 +336,8 @@
           "name": "participant_sport_id_sport_id_fk",
           "tableFrom": "participant",
           "tableTo": "sport",
-          "columnsFrom": [
-            "sport_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sport_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -467,9 +426,7 @@
       "indexes": {
         "standing_participant_id_idx": {
           "name": "standing_participant_id_idx",
-          "columns": [
-            "participant_id"
-          ],
+          "columns": ["participant_id"],
           "isUnique": false
         }
       },
@@ -478,12 +435,8 @@
           "name": "standing_competition_id_competition_id_fk",
           "tableFrom": "standing",
           "tableTo": "competition",
-          "columnsFrom": [
-            "competition_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["competition_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -491,23 +444,15 @@
           "name": "standing_participant_id_participant_id_fk",
           "tableFrom": "standing",
           "tableTo": "participant",
-          "columnsFrom": [
-            "participant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["participant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "standing_competition_id_participant_id_table_name_pk": {
-          "columns": [
-            "competition_id",
-            "participant_id",
-            "table_name"
-          ],
+          "columns": ["competition_id", "participant_id", "table_name"],
           "name": "standing_competition_id_participant_id_table_name_pk"
         }
       },
