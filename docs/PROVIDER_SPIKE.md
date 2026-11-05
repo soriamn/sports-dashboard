@@ -132,6 +132,13 @@ These were recorded as proposals in the spike and applied in the PRs that need t
 7. **`ExternalRef` for a competition needs a composite key** for ESPN: league slug plus season year (`eng.1:2026`), because ESPN has no id for "competition in a season".
 8. **Everything numeric arrives as a string** in both providers (`"2"`, `"25"`). Zod schemas must coerce explicitly, not with `z.coerce` on unknown input.
 
+## Checked later with the real sync
+
+Running `npm run sync` against the live ESPN API (2026-11-05) stored 4 competitions, 1,635 events and 90 standing rows, and a second run created nothing new.
+
+- A match in progress arrived as `live` (state `in`), so that path now has a real example.
+- Matches with an unconfirmed time are mostly far-future fixtures that the league has not scheduled yet: 250 in La Liga (from 29 November) and 190 in Serie A (from January). Calendar feeds mark them tentative.
+
 ## What this spike did not check
 
 - Live and postponed matches (none available that day).

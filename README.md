@@ -11,6 +11,7 @@ Requires the Node version in [`.nvmrc`](.nvmrc).
 ```bash
 npm ci
 npm run db:reset   # creates the local database with sample data
+npm run sync       # optional: adds real football data from ESPN
 npm run dev
 ```
 
