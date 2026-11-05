@@ -30,7 +30,7 @@ Everything in this repository is in **English**: code, comments, identifiers, co
 | Lint / format  | ESLint + Prettier                                             |
 | CI             | GitHub Actions                                                |
 
-Status: the app is scaffolded (Next.js, Tailwind, shadcn/ui, ESLint, Prettier, Vitest, CI) and the database layer exists (Drizzle schema, migrations, seed). Zod, `ical-generator` and the sync are not set up yet; they arrive with the user stories in `docs/PRODUCT.md`.
+Status: the app is scaffolded (Next.js, Tailwind, shadcn/ui, ESLint, Prettier, Vitest, CI) and the database layer exists (Drizzle schema, migrations, seed). Zod is set up and the ESPN football adapter exists (`src/adapters/`). `ical-generator` and the sync are not set up yet; they arrive with the user stories in `docs/PRODUCT.md`.
 
 Football data provider (decided in the story 2 spike): the **unofficial ESPN API**, for the Argentine Liga Profesional, Premier League, La Liga and Serie A. F1 uses Jolpica. Why ESPN, its quirks (no date ranges, no matchday, `timeValid`, statuses) and the proposed model changes are in [docs/PROVIDER_SPIKE.md](docs/PROVIDER_SPIKE.md). Read it before working on an adapter. Real saved responses live in `src/adapters/<provider>/__fixtures__/` and are the input for adapter tests; they are raw provider data, so Prettier ignores them and they must not be edited by hand.
 
