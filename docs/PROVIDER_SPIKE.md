@@ -39,7 +39,7 @@ Findings about the requests:
 - **Date ranges do not work.** `dates=20261101-20261130` answers `400 Failed to get events endpoint`, with every range format tried. Single days (`dates=20261107`) and whole years work. The sync must request the year and filter.
 - **European seasons span two calendar years**, so `dates=2026` returns the tail of 2025-26 and the start of 2026-27 together (194 and 180 events for the Premier League). Filter by `event.season.year` (and `season.slug`), and request the next year too when a season crosses the new year.
 - The server answers gzip-compressed even when not asked; real HTTP clients handle it, `curl` needs `--compressed`.
-- No API key and no documented rate limit. We keep requests few and sequential.
+- No API key and no documented rate limit. We keep requests few and sequential: a full sync is 15 requests (4 to learn each league's current season, 7 for fixtures because European leagues need two calendar years, and 4 for standings).
 
 ## Fixtures
 
@@ -121,7 +121,7 @@ Observations:
 
 ## Model changes needed
 
-These are recorded as proposals. They should be applied in the PRs that need them (adapter and sync for football, the F1 PR for F1), not in this spike.
+These were recorded as proposals in the spike and applied in the PRs that need them (adapter and sync for football, the F1 PR for F1). **Status:** items 2, 3, 7 and 8 were applied with the ESPN adapter; 1 needed no change; 4 is accepted as is; 5 and 6 wait for the F1 story.
 
 1. **Football standings arrive as a `stats` array**, not a flat object. The adapter converts them to `FootballStanding`. No model change.
 2. **Add a status for abandoned or suspended matches, or decide the mapping.** `STATUS_ABANDONED` is not one of `scheduled | live | finished | postponed | cancelled`. Recommendation: map it to `postponed`, because an abandoned match is usually replayed, and keep the original `status.type.name` out of the model. To be confirmed in the adapter PR once more real examples exist.
