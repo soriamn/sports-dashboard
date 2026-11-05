@@ -167,6 +167,8 @@ type F1Standing = { wins: number };
 
 ## Open questions
 
+Findings from the story 2 spike (real ESPN and Jolpica samples) are in [PROVIDER_SPIKE.md](PROVIDER_SPIKE.md#model-changes-needed). The proposed changes are not applied yet: penalty shootouts belong in the participant outcome, abandoned matches need a status mapping, `round` is null for most league matches, and `ExternalRef` for a competition needs a composite key.
+
 - **Grouping F1 sessions into a race weekend.** Grouping by the free-text `round` is fragile. Decide in the F1 story whether to add a weekend identifier or a parent event.
 - **Mid-season team changes** (`validFrom` / `validTo` on `CompetitionEntry`): keep only if a provider actually exposes them.
 
