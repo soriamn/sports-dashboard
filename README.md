@@ -20,6 +20,7 @@ Then open http://localhost:3000. Other commands (lint, typecheck, tests, build) 
 
 - [Product scope and user stories](docs/PRODUCT.md)
 - [Data model and adapter contract](docs/DATA_MODEL.md)
+- [Football and F1 provider spike](docs/PROVIDER_SPIKE.md)
 - [Contributor and AI assistant guidelines](CLAUDE.md)
 
 ## Status

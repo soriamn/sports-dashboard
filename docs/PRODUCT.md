@@ -136,14 +136,14 @@ Planned PRs:
 
 Initial choices; each is isolated behind an adapter, so they can be swapped.
 
-| Need                                  | Source                                                                                               | Notes                                                    |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Football fixtures, results, standings | To be chosen in the story 2 spike (candidates: API-Football, football-data.org, ESPN unofficial API) | Check free-tier limits and league coverage first.        |
-| F1                                    | Jolpica (Ergast-compatible)                                                                          | Free, no API key.                                        |
-| News                                  | RSS (Google News search feeds, club and media feeds)                                                 | Show headline and link only, never full article content. |
+| Need                                  | Source                                               | Notes                                                    |
+| ------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------- |
+| Football fixtures, results, standings | ESPN unofficial API (chosen in the story 2 spike)    | Unofficial; see [PROVIDER_SPIKE.md](PROVIDER_SPIKE.md).  |
+| F1                                    | Jolpica (Ergast-compatible)                          | Free, no API key.                                        |
+| News                                  | RSS (Google News search feeds, club and media feeds) | Show headline and link only, never full article content. |
 
 ## Open questions
 
-- Which football provider and which league do we start with? (Decided in the story 2 spike.)
+- ~~Which football provider and which league do we start with?~~ Decided in the story 2 spike: ESPN, for the Argentine Liga Profesional, Premier League, La Liga and Serie A. If ESPN breaks, the fallback is paid API-Football. See [PROVIDER_SPIKE.md](PROVIDER_SPIKE.md).
 - Where do we deploy, if anywhere? Candidates: a host with a persistent disk (Fly.io, Railway, a VPS) running SQLite as a file; Turso (hosted libSQL) with the same code; or hosted Postgres, which would require rewriting the schema. Not needed before there is something to publish.
 - How often should the sync run, and where (GitHub Actions schedule, a server cron)? This depends on the deployment choice.
