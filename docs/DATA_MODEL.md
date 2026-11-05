@@ -146,10 +146,11 @@ Validated with Zod discriminated unions on `sportId`. Starting shapes:
 ```ts
 // Football
 type FootballEventDetails = {
+  extraTime: boolean; // the match went to extra time (and maybe penalties)
   halftimeScore?: { home: number; away: number };
-  penalties?: { home: number; away: number };
 };
-type FootballOutcome = { score: number | null };
+// Per participant. `shootoutScore` is set only when penalties decided the match.
+type FootballOutcome = { score: number | null; shootoutScore?: number };
 type FootballStanding = {
   played: number;
   won: number;
@@ -169,7 +170,7 @@ type F1Standing = { wins: number };
 
 ## Open questions
 
-Findings from the story 2 spike (real ESPN and Jolpica samples) are in [PROVIDER_SPIKE.md](PROVIDER_SPIKE.md#model-changes-needed). The proposed changes are not applied yet: penalty shootouts belong in the participant outcome, abandoned matches need a status mapping, `round` is null for most league matches, and `ExternalRef` for a competition needs a composite key.
+Findings from the story 2 spike (real ESPN and Jolpica samples) are in [PROVIDER_SPIKE.md](PROVIDER_SPIKE.md#model-changes-needed). Applied with the ESPN adapter: penalty shootouts live in the participant outcome (`shootoutScore`) and `extraTime` in the event details; an abandoned match maps to `postponed`; `ExternalRef` for a competition uses a composite external ID such as `eng.1:2026`. Still open: `round` is null for most league matches, and F1 needs a weekend identifier (below).
 
 - **Grouping F1 sessions into a race weekend.** Grouping by the free-text `round` is fragile. Decide in the F1 story whether to add a weekend identifier or a parent event.
 - **Mid-season team changes** (`validFrom` / `validTo` on `CompetitionEntry`): keep only if a provider actually exposes them.
@@ -186,6 +187,8 @@ interface SportAdapter {
   fetchStandings(competitionId: string): Promise<NormalizedStanding[]>;
 }
 ```
+
+The `Normalized*` types are defined in `src/adapters/types.ts`. They identify every entity by the provider's own `externalId`, because adapters do not know our internal IDs; the sync resolves them through `ExternalRef`. Football-specific JSON is validated by the Zod schemas in `src/adapters/football.ts`.
 
 Rules for adapters:
 
