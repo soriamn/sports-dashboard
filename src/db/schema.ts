@@ -2,13 +2,14 @@ import {
   index,
   integer,
   primaryKey,
+  real,
   sqliteTable,
   text,
 } from "drizzle-orm/sqlite-core";
 
 // Schema for the common data model described in docs/DATA_MODEL.md.
-// Only the tables needed so far exist; Standing, NewsItem, CompetitionEntry and
-// ExternalRef are added with the stories that need them.
+// Only the tables needed so far exist; NewsItem and CompetitionEntry are added
+// with the stories that need them.
 //
 // All timestamps are UTC, stored as milliseconds since the epoch.
 
@@ -21,15 +22,22 @@ export const EVENT_STATUSES = [
   "cancelled",
 ] as const;
 export const PARTICIPANT_ROLES = ["home", "away", "competitor"] as const;
+export const EXTERNAL_ENTITY_TYPES = [
+  "competition",
+  "participant",
+  "event",
+] as const;
 
 export type ParticipantKind = (typeof PARTICIPANT_KINDS)[number];
 export type EventStatus = (typeof EVENT_STATUSES)[number];
 export type ParticipantRole = (typeof PARTICIPANT_ROLES)[number];
+export type ExternalEntityType = (typeof EXTERNAL_ENTITY_TYPES)[number];
 
 // Sport-specific JSON. Typed loosely for now; per-sport Zod schemas arrive
 // with the adapters.
 export type EventDetails = Record<string, unknown>;
 export type EventOutcome = Record<string, unknown>;
+export type StandingStats = Record<string, unknown>;
 
 const newId = () => crypto.randomUUID();
 
@@ -121,8 +129,61 @@ export const eventParticipant = sqliteTable(
   ],
 );
 
+export const standing = sqliteTable(
+  "standing",
+  {
+    competitionId: text("competition_id")
+      .notNull()
+      .references(() => competition.id),
+    participantId: text("participant_id")
+      .notNull()
+      .references(() => participant.id),
+    // Which table of the competition the row belongs to: "league", "Group A",
+    // "drivers", "constructors". Named table_name because "table" is reserved.
+    tableName: text("table_name").notNull(),
+    rank: integer("rank").notNull(),
+    // Not an integer column on purpose: some sports award half points.
+    points: real("points").notNull(),
+    // Sport-specific numbers (played/won/drawn/lost/goals for football).
+    stats: text("stats", { mode: "json" })
+      .$type<StandingStats>()
+      .notNull()
+      .$defaultFn(() => ({})),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.competitionId, t.participantId, t.tableName] }),
+    // Lists the tables a participant appears in.
+    index("standing_participant_id_idx").on(t.participantId),
+  ],
+);
+
+// Maps our entities to a provider's IDs, so a sync can update what it already
+// stored instead of creating duplicates. The provider ID lives only here, never
+// in the main tables. entity_id points at a different table depending on
+// entity_type, so SQLite cannot enforce it with a foreign key: whoever deletes
+// an entity must delete its refs too (the seed does).
+export const externalRef = sqliteTable(
+  "external_ref",
+  {
+    entityType: text("entity_type", { enum: EXTERNAL_ENTITY_TYPES }).notNull(),
+    entityId: text("entity_id").notNull(),
+    // e.g. "espn", "jolpica".
+    provider: text("provider").notNull(),
+    externalId: text("external_id").notNull(),
+  },
+  (t) => [
+    // One of our entities per provider ID. This is what the sync looks up.
+    primaryKey({ columns: [t.provider, t.entityType, t.externalId] }),
+    // Finds the refs of one of our entities.
+    index("external_ref_entity_idx").on(t.entityType, t.entityId),
+  ],
+);
+
 export type Sport = typeof sport.$inferSelect;
 export type Competition = typeof competition.$inferSelect;
 export type Participant = typeof participant.$inferSelect;
 export type Event = typeof event.$inferSelect;
 export type EventParticipant = typeof eventParticipant.$inferSelect;
+export type Standing = typeof standing.$inferSelect;
+export type ExternalRef = typeof externalRef.$inferSelect;

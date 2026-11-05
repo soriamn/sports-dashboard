@@ -3,8 +3,10 @@ import {
   competition,
   event,
   eventParticipant,
+  externalRef,
   participant,
   sport,
+  standing,
   type EventStatus,
 } from "./schema";
 
@@ -130,7 +132,10 @@ export async function seed(db: Db, now: Date = new Date()) {
   const todayUtc = Math.floor(now.getTime() / DAY_MS) * DAY_MS;
 
   await db.transaction(async (tx) => {
-    // Children first, to respect foreign keys.
+    // Children first, to respect foreign keys. external_ref has no foreign key
+    // (it points at several tables), so it must be cleared explicitly.
+    await tx.delete(externalRef);
+    await tx.delete(standing);
     await tx.delete(eventParticipant);
     await tx.delete(event);
     await tx.delete(participant);

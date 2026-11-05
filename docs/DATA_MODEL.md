@@ -99,15 +99,15 @@ Links participants to an event.
 
 One row of a competition table.
 
-| Field         | Type          | Notes                                                                                               |
-| ------------- | ------------- | --------------------------------------------------------------------------------------------------- |
-| competitionId | string        |                                                                                                     |
-| participantId | string        |                                                                                                     |
-| rank          | integer       |                                                                                                     |
-| points        | number        |                                                                                                     |
-| stats         | JSON          | Sport-specific: played/won/drawn/lost/goals for football, wins for F1.                              |
-| table         | string        | Which table of the competition this row belongs to: `league`, `Group A`, `drivers`, `constructors`. |
-| updatedAt     | UTC timestamp |                                                                                                     |
+| Field         | Type          | Notes                                                                                                                                                                          |
+| ------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| competitionId | string        |                                                                                                                                                                                |
+| participantId | string        |                                                                                                                                                                                |
+| rank          | integer       |                                                                                                                                                                                |
+| points        | number        |                                                                                                                                                                                |
+| stats         | JSON          | Sport-specific: played/won/drawn/lost/goals for football, wins for F1.                                                                                                         |
+| table         | string        | Which table of the competition this row belongs to: `league`, `Group A`, `drivers`, `constructors`. Stored in the `table_name` column, because `table` is a reserved SQL word. |
+| updatedAt     | UTC timestamp |                                                                                                                                                                                |
 
 A competition can have several tables. F1 has two per season (`drivers` and `constructors`), and its races belong to the single competition, not to either table.
 
@@ -136,6 +136,8 @@ Maps our entities to provider IDs, so data from different sources can refer to t
 | externalId | string                                    | The provider's ID.              |
 
 Unique on `(provider, entityType, externalId)`. Adapters use it to upsert instead of creating duplicates.
+
+`entityId` points at a different table depending on `entityType`, so the database cannot enforce it with a foreign key. Whoever deletes an entity must delete its refs too.
 
 ## Sport-specific details
 

@@ -1,0 +1,473 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "5dd3b925-8f0f-4f6f-b8ae-8cae13de3f3e",
+  "prevId": "68225e2f-e73a-4ab5-bffa-a7aa2f374ca8",
+  "tables": {
+    "competition": {
+      "name": "competition",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sport_id": {
+          "name": "sport_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "season": {
+          "name": "season",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "competition_sport_id_idx": {
+          "name": "competition_sport_id_idx",
+          "columns": ["sport_id"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "competition_sport_id_sport_id_fk": {
+          "name": "competition_sport_id_sport_id_fk",
+          "tableFrom": "competition",
+          "tableTo": "sport",
+          "columnsFrom": ["sport_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "event": {
+      "name": "event",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "competition_id": {
+          "name": "competition_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "starts_at": {
+          "name": "starts_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "time_confirmed": {
+          "name": "time_confirmed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'scheduled'"
+        },
+        "round": {
+          "name": "round",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "venue": {
+          "name": "venue",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "details": {
+          "name": "details",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "event_competition_starts_at_idx": {
+          "name": "event_competition_starts_at_idx",
+          "columns": ["competition_id", "starts_at"],
+          "isUnique": false
+        },
+        "event_starts_at_idx": {
+          "name": "event_starts_at_idx",
+          "columns": ["starts_at"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "event_competition_id_competition_id_fk": {
+          "name": "event_competition_id_competition_id_fk",
+          "tableFrom": "event",
+          "tableTo": "competition",
+          "columnsFrom": ["competition_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "event_participant": {
+      "name": "event_participant",
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "participant_id": {
+          "name": "participant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "outcome": {
+          "name": "outcome",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "event_participant_participant_id_idx": {
+          "name": "event_participant_participant_id_idx",
+          "columns": ["participant_id"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "event_participant_event_id_event_id_fk": {
+          "name": "event_participant_event_id_event_id_fk",
+          "tableFrom": "event_participant",
+          "tableTo": "event",
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "event_participant_participant_id_participant_id_fk": {
+          "name": "event_participant_participant_id_participant_id_fk",
+          "tableFrom": "event_participant",
+          "tableTo": "participant",
+          "columnsFrom": ["participant_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "event_participant_event_id_participant_id_pk": {
+          "columns": ["event_id", "participant_id"],
+          "name": "event_participant_event_id_participant_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "external_ref": {
+      "name": "external_ref",
+      "columns": {
+        "entity_type": {
+          "name": "entity_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entity_id": {
+          "name": "entity_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "external_id": {
+          "name": "external_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "external_ref_entity_idx": {
+          "name": "external_ref_entity_idx",
+          "columns": ["entity_type", "entity_id"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "external_ref_provider_entity_type_external_id_pk": {
+          "columns": ["provider", "entity_type", "external_id"],
+          "name": "external_ref_provider_entity_type_external_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "participant": {
+      "name": "participant",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sport_id": {
+          "name": "sport_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "short_name": {
+          "name": "short_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "participant_sport_id_idx": {
+          "name": "participant_sport_id_idx",
+          "columns": ["sport_id"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "participant_sport_id_sport_id_fk": {
+          "name": "participant_sport_id_sport_id_fk",
+          "tableFrom": "participant",
+          "tableTo": "sport",
+          "columnsFrom": ["sport_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "sport": {
+      "name": "sport",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "standing": {
+      "name": "standing",
+      "columns": {
+        "competition_id": {
+          "name": "competition_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "participant_id": {
+          "name": "participant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "table_name": {
+          "name": "table_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "rank": {
+          "name": "rank",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "points": {
+          "name": "points",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "stats": {
+          "name": "stats",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "standing_participant_id_idx": {
+          "name": "standing_participant_id_idx",
+          "columns": ["participant_id"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "standing_competition_id_competition_id_fk": {
+          "name": "standing_competition_id_competition_id_fk",
+          "tableFrom": "standing",
+          "tableTo": "competition",
+          "columnsFrom": ["competition_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "standing_participant_id_participant_id_fk": {
+          "name": "standing_participant_id_participant_id_fk",
+          "tableFrom": "standing",
+          "tableTo": "participant",
+          "columnsFrom": ["participant_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "standing_competition_id_participant_id_table_name_pk": {
+          "columns": ["competition_id", "participant_id", "table_name"],
+          "name": "standing_competition_id_participant_id_table_name_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

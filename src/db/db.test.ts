@@ -5,8 +5,10 @@ import {
   competition,
   event,
   eventParticipant,
+  externalRef,
   participant,
   sport,
+  standing,
 } from "./schema";
 import { seed } from "./seed";
 import { createTestDb } from "./testing";
@@ -38,8 +40,10 @@ describe("migrations", () => {
       "competition",
       "event",
       "event_participant",
+      "external_ref",
       "participant",
       "sport",
+      "standing",
     ]);
   });
 
@@ -85,6 +89,115 @@ describe("event columns", () => {
   });
 });
 
+describe("external_ref", () => {
+  it("maps one provider ID to a single entity", async () => {
+    await ctx.db.insert(externalRef).values({
+      entityType: "event",
+      entityId: "match-01",
+      provider: "espn",
+      externalId: "740780",
+    });
+
+    // The same provider ID cannot point at a second entity.
+    await expect(
+      ctx.db.insert(externalRef).values({
+        entityType: "event",
+        entityId: "match-02",
+        provider: "espn",
+        externalId: "740780",
+      }),
+    ).rejects.toMatchObject({
+      cause: { message: expect.stringContaining("UNIQUE") },
+    });
+
+    // The same ID is fine for another provider or another entity type.
+    await ctx.db.insert(externalRef).values([
+      {
+        entityType: "event",
+        entityId: "x",
+        provider: "other",
+        externalId: "740780",
+      },
+      {
+        entityType: "participant",
+        entityId: "y",
+        provider: "espn",
+        externalId: "740780",
+      },
+    ]);
+    expect(await ctx.db.select().from(externalRef)).toHaveLength(3);
+  });
+});
+
+describe("standing", () => {
+  async function insertCompetitionAndTeams() {
+    await ctx.db.insert(sport).values({ id: "football", name: "Football" });
+    await ctx.db.insert(competition).values({
+      id: "c1",
+      sportId: "football",
+      name: "League",
+      season: "2026",
+    });
+    await ctx.db.insert(participant).values([
+      { id: "t1", sportId: "football", kind: "team", name: "One" },
+      { id: "t2", sportId: "football", kind: "team", name: "Two" },
+    ]);
+  }
+
+  it("round-trips points, JSON stats and the UTC timestamp", async () => {
+    await insertCompetitionAndTeams();
+    const updatedAt = new Date("2026-11-05T21:30:00Z");
+    await ctx.db.insert(standing).values({
+      competitionId: "c1",
+      participantId: "t1",
+      tableName: "league",
+      rank: 1,
+      points: 24.5,
+      stats: { played: 9, won: 8 },
+      updatedAt,
+    });
+
+    const [row] = await ctx.db.select().from(standing);
+    expect(row.points).toBe(24.5);
+    expect(row.stats).toEqual({ played: 9, won: 8 });
+    expect(row.updatedAt.toISOString()).toBe("2026-11-05T21:30:00.000Z");
+  });
+
+  it("allows one row per participant in each table of a competition", async () => {
+    await insertCompetitionAndTeams();
+    const row = {
+      competitionId: "c1",
+      participantId: "t1",
+      rank: 1,
+      points: 3,
+      updatedAt: new Date(),
+    };
+    await ctx.db.insert(standing).values({ ...row, tableName: "Group A" });
+    await ctx.db.insert(standing).values({ ...row, tableName: "Group B" });
+
+    await expect(
+      ctx.db.insert(standing).values({ ...row, tableName: "Group A" }),
+    ).rejects.toMatchObject({
+      cause: { message: expect.stringContaining("UNIQUE") },
+    });
+  });
+
+  it("enforces foreign keys", async () => {
+    await expect(
+      ctx.db.insert(standing).values({
+        competitionId: "missing",
+        participantId: "missing",
+        tableName: "league",
+        rank: 1,
+        points: 0,
+        updatedAt: new Date(),
+      }),
+    ).rejects.toMatchObject({
+      cause: { message: expect.stringContaining("FOREIGN KEY") },
+    });
+  });
+});
+
 describe("seed", () => {
   it("loads the sample data", async () => {
     const counts = await seed(ctx.db, NOW);
@@ -99,6 +212,29 @@ describe("seed", () => {
 
     const links = await ctx.db.select().from(eventParticipant);
     expect(links).toHaveLength(16);
+  });
+
+  it("also clears external refs and standings left by a sync", async () => {
+    await seed(ctx.db, NOW);
+    await ctx.db.insert(externalRef).values({
+      entityType: "event",
+      entityId: "match-01",
+      provider: "espn",
+      externalId: "1",
+    });
+    await ctx.db.insert(standing).values({
+      competitionId: "sample-league-2026-27",
+      participantId: "riverside-fc",
+      tableName: "league",
+      rank: 1,
+      points: 3,
+      updatedAt: NOW,
+    });
+
+    await seed(ctx.db, NOW);
+
+    expect(await ctx.db.select().from(externalRef)).toEqual([]);
+    expect(await ctx.db.select().from(standing)).toEqual([]);
   });
 
   it("can run twice without duplicating rows", async () => {
