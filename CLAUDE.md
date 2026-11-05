@@ -29,7 +29,7 @@ Everything in this repository is in **English**: code, comments, identifiers, co
 | Lint / format  | ESLint + Prettier                                             |
 | CI             | GitHub Actions                                                |
 
-Status: the app is scaffolded (Next.js, Tailwind, shadcn/ui, ESLint, Prettier, Vitest, CI) and the database layer exists (Drizzle schema, migrations, seed). Zod, `ical-generator` and the sync are not set up yet; they arrive with the user stories in `docs/PRODUCT.md`.
+Status: the app is scaffolded (Next.js, Tailwind, shadcn/ui, ESLint, Prettier, Vitest, CI) and the database layer exists (Drizzle schema, migrations, seed). The team calendar feed (`/teams/[teamId]/calendar.ics`, built with `ical-generator`) works from the database. Zod and the sync are not set up yet; they arrive with the user stories in `docs/PRODUCT.md`.
 
 Node version is in `.nvmrc`; CI uses the same file. The package manager is npm.
 
@@ -77,6 +77,8 @@ shadcn/ui components are added with `npx shadcn@latest add <component>` into `sr
 - All timestamps are UTC in storage; convert to the viewer's time zone only in the UI.
 - Provider IDs are stored in `ExternalRef`, never in the main tables.
 - Sport-specific logic stays behind the common model; do not leak provider response shapes into the UI.
+- Route handlers stay thin. The logic lives in `src/lib/` and takes the database as a parameter, so tests can use an in-memory one (see `src/lib/calendar/handler.ts`). `getDb()` in `src/db/server.ts` is only called from routes and pages.
+- The calendar feed has to stay stable for subscribers: event `UID`s are derived from our event IDs and must not change, or calendar apps will duplicate events.
 
 ## Git workflow
 

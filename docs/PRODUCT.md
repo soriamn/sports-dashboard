@@ -53,9 +53,11 @@ _As a fan, I can open a URL and get an `.ics` file with a team's upcoming matche
 
 Acceptance criteria:
 
-- The feed is generated from the database, which contains sample data.
+- The feed is generated from the database, which contains sample data, at `/teams/[teamId]/calendar.ics`.
+- It contains only upcoming matches of that team. A match stays in the feed until its calendar slot is over (2 hours for football).
 - It imports correctly into Google Calendar and Apple Calendar.
-- Events with an unconfirmed time are marked tentative.
+- Events with an unconfirmed time (or postponed) are marked tentative, and cancelled ones are sent as cancelled.
+- An unknown team returns 404.
 
 Planned PRs:
 
