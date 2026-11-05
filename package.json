@@ -16,6 +16,7 @@
     "db:migrate": "node --env-file-if-exists=.env.local --import tsx scripts/db-migrate.mts",
     "db:seed": "node --env-file-if-exists=.env.local --import tsx scripts/db-seed.mts",
     "db:reset": "node --env-file-if-exists=.env.local --import tsx scripts/db-reset.mts",
+    "sync": "node --env-file-if-exists=.env.local --import tsx scripts/sync.mts",
     "db:studio": "node --env-file-if-exists=.env.local node_modules/drizzle-kit/bin.cjs studio"
   },
   "dependencies": {
